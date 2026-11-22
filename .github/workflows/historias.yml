@@ -1,0 +1,122 @@
+name: Historias
+# Cada reel publicado sale como historia con sticker de enlace, en su cuenta.
+# 22/11: repo nuevo (eugenia-celular). El celular se armó de cero (armar.yml) y las cuentas
+# se iniciaron en vivo (sesion.yml). Después de cada corrida que sube una historia, el
+# celular se guarda con el guardado seguro (nube/copia.sh): las sesiones quedan al día y
+# nunca se vuelve a una copia vieja (lo que el 22/11 hizo que Meta bloqueara hidroponía).
+on:
+  workflow_dispatch:
+    inputs:
+      solo:
+        description: "Solo esta cuenta (hidroponia, bonsai, terrarios, herbologia): su último reel, ya"
+        type: string
+        default: ""
+      modo:
+        description: "todas = último reel de cada cuenta, tenga o no historia; sin-publicar = prueba sin publicar"
+        type: choice
+        options: ["", "todas", "sin-publicar"]
+        default: ""
+
+concurrency:
+  group: celular
+  cancel-in-progress: false
+
+jobs:
+  historias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EMU_CLAVE: ${{ secrets.EMU_CLAVE }}
+      ADB_KEY: ${{ secrets.ADB_KEY }}
+      ADB_KEY_PUB: ${{ secrets.ADB_KEY_PUB }}
+      PUERTA_R2_URL: ${{ secrets.PUERTA_R2_URL }}
+      PUERTA_R2_KEY: ${{ secrets.PUERTA_R2_KEY }}
+      META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+      GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ¿Hay historias pendientes?
+        id: pend
+        run: |
+          python3 historias_nube.py --probar ${{ inputs.modo && format('--{0}', inputs.modo) || '' }} ${{ inputs.solo && format('--solo={0}', inputs.solo) || '' }} | tee probar.txt
+          n=$(grep -oP 'pendientes: \K\d+' probar.txt || echo 0)
+          echo "n=$n" >> "$GITHUB_OUTPUT"
+
+      - name: Imagen de Android (cache)
+        if: steps.pend.outputs.n != '0'
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk/system-images/android-34/google_apis_playstore/x86_64
+            /usr/local/lib/android/sdk/emulator
+          key: android34-playstore-x86_64-v1
+
+      - name: Preparar y traer el celular
+        if: steps.pend.outputs.n != '0'
+        run: |
+          bash nube/preparar.sh
+          bash nube/copia.sh restaurar
+
+      - name: Prender
+        if: steps.pend.outputs.n != '0'
+        run: |
+          bash nube/prender.sh eugenia_cel
+          adb shell ime set com.android.adbkeyboard/.AdbIME || true
+
+      - name: Historias
+        if: steps.pend.outputs.n != '0'
+        timeout-minutes: 30
+        run: python3 historias_nube.py ${{ inputs.modo && format('--{0}', inputs.modo) || '' }} ${{ inputs.solo && format('--solo={0}', inputs.solo) || '' }}
+
+      - name: Guardar el celular (seguro)
+        # Solo si subió alguna historia y el emulador sigue vivo (un disco de un emulador
+        # caído puede quedar a medio escribir).
+        if: ${{ !cancelled() && hashFiles('guardar_avd') != '' }}
+        run: |
+          b=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -dc '0-9')
+          [ "$b" = "1" ] || { echo "emulador caído: no guardo, sigue la copia anterior"; exit 0; }
+          bash nube/copia.sh guardar
+
+      - name: Guardar lo hecho
+        if: always()
+        run: |
+          git config user.name "eugenia-celular"
+          git config user.email "eugenia-celular@users.noreply.github.com"
+          cp estado.json /tmp/mio.json
+          for i in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python3 - <<'P'
+          import json
+          m = json.load(open("/tmp/mio.json", encoding="utf-8"))
+          r = json.load(open("estado.json", encoding="utf-8"))
+          for k in ("hechas", "fallas", "textos", "pausa_hasta", "intentos"):
+              r.setdefault(k, {}).update(m.get(k, {}))
+          r["desde"] = r.get("desde") or m.get("desde")
+          json.dump(r, open("estado.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          P
+            git add estado.json
+            git diff --cached --quiet && break
+            git commit -q -m "historias $(date -u +%F' '%H:%M)" && git push -q && break
+            sleep 5
+          done
+
+      - name: Capturas y log cifrados (el repo es público)
+        if: always()
+        run: |
+          ls emulador.log falla_*.png editor_*.png 2>/dev/null | grep -q . || exit 0
+          tar -czf diag.tgz $(ls falla_*.png editor_*.png 2>/dev/null) emulador.log || tar -czf diag.tgz emulador.log
+          openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:EMU_CLAVE -in diag.tgz -out diag.tgz.enc
+          rm -f diag.tgz falla_*.png editor_*.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diag-${{ github.run_id }}
+          path: diag.tgz.enc
+          retention-days: 7
+          if-no-files-found: ignore
