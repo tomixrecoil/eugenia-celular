@@ -11,7 +11,7 @@ printf '%s\n' "$ADB_KEY" > ~/.android/adbkey
 printf '%s\n' "$ADB_KEY_PUB" > ~/.android/adbkey.pub
 chmod 600 ~/.android/adbkey
 adb kill-server >/dev/null 2>&1 || true
-adb start-server >/dev/null 2>&1
+adb start-server >/dev/null 2>&1 || { sleep 2; adb start-server >/dev/null 2>&1 || true; }
 W="-no-window"; [ -n "$VENTANA" ] && W=""
 nohup emulator -avd "$AVD" $W -no-audio -no-boot-anim -no-snapshot -no-metrics \
   -gpu swiftshader_indirect -memory 4096 -cores 4 -accel on "$@" >> emulador.log 2>&1 &
