@@ -1,0 +1,112 @@
+name: Armar el celular desde cero
+# 22/11 (Tomix: "crea todo de 0 por separado"). Arma un Android nuevo y limpio (AVD
+# eugenia_cel) con Instagram instalado, SIN cuentas. El Instagram se saca de la copia vieja
+# (repo eugenia-historias) con el celular viejo SIN internet: así Meta no ve esa sesión.
+# Las cuentas se agregan después con "Sesión en vivo" (las contraseñas las escribe Tomix).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: celular
+  cancel-in-progress: false
+
+jobs:
+  armar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EMU_CLAVE: ${{ secrets.EMU_CLAVE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Imagen de Android (cache)
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk/system-images/android-34/google_apis_playstore/x86_64
+            /usr/local/lib/android/sdk/emulator
+          key: android34-playstore-x86_64-v1
+
+      - name: Preparar la máquina
+        run: bash nube/preparar.sh
+
+      - name: Copia vieja (solo para sacar el Instagram)
+        env:
+          EMU_CLAVE_VIEJA: ${{ secrets.EMU_CLAVE_VIEJA }}
+        run: |
+          D=/mnt/avd/eugenia_ig.avd; mkdir -p $D /mnt/avd/dlv
+          gh release download avd-cifrado -R tomixrecoil/eugenia-historias -D /mnt/avd/dlv
+          des() { openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:EMU_CLAVE_VIEJA -in "$1"; }
+          for f in $(ls /mnt/avd/dlv/userdata.part*.enc | sort); do des $f; done > $D/userdata-qemu.img
+          des /mnt/avd/dlv/avd-chico.tgz.enc | tar -xz -C $D
+          rm -rf /mnt/avd/dlv
+          sed -i 's#\\#/#g' $D/config.ini
+          printf 'avd.ini.encoding=UTF-8\npath=%s\ntarget=android-34\n' "$D" > /mnt/avd/eugenia_ig.ini
+          ls -la $D
+
+      - name: Sacar el Instagram de la copia vieja, sin internet
+        env:
+          ADB_KEY: ${{ secrets.ADB_KEY_VIEJA }}
+          ADB_KEY_PUB: ${{ secrets.ADB_KEY_VIEJA_PUB }}
+        run: |
+          # DNS inválido: Instagram no puede llegar a Meta. Y modo avión apenas hay adb.
+          ( for i in $(seq 1 120); do adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 && break; sleep 1; done ) &
+          bash nube/prender.sh eugenia_ig -dns-server 127.0.0.1
+          adb shell cmd connectivity airplane-mode enable || true
+          adb shell am force-stop com.instagram.android || true
+          echo "Instagram: $(adb shell dumpsys package com.instagram.android | grep -m1 versionName)"
+          mkdir -p ig
+          for p in $(adb shell pm path com.instagram.android | sed 's/^package://' | tr -d '\r'); do
+            adb pull "$p" "ig/$(basename "$p")"
+          done
+          ls -la ig
+          adb emu kill || true
+          sleep 10; pkill -f qemu-system || true; sleep 3
+          rm -rf /mnt/avd/eugenia_ig.avd /mnt/avd/eugenia_ig.ini
+
+      - name: Android nuevo y limpio
+        run: |
+          echo no | avdmanager create avd -n eugenia_cel -k "system-images;android-34;google_apis_playstore;x86_64" \
+            -d pixel_6 -p /mnt/avd/eugenia_cel.avd --force
+          C=/mnt/avd/eugenia_cel.avd/config.ini
+          for kv in "hw.ramSize=4096" "disk.dataPartition.size=8G" "hw.keyboard=yes" "hw.gpu.enabled=yes" \
+                    "hw.gpu.mode=swiftshader_indirect" "hw.lcd.width=1080" "hw.lcd.height=2400" "hw.lcd.density=420"; do
+            k=${kv%%=*}; grep -q "^$k" $C && sed -i "s#^$k.*#$kv#" $C || echo "$kv" >> $C
+          done
+          cat $C
+
+      - name: Instalar Instagram y el teclado
+        env:
+          ADB_KEY: ${{ secrets.ADB_KEY }}
+          ADB_KEY_PUB: ${{ secrets.ADB_KEY_PUB }}
+        run: |
+          bash nube/prender.sh eugenia_cel
+          adb install-multiple -r ig/*.apk
+          adb install -r apk/adbkeyboard.apk
+          adb shell ime enable com.android.adbkeyboard/.AdbIME
+          adb shell ime set com.android.adbkeyboard/.AdbIME
+          # Sin actualizaciones automáticas: la versión de Instagram queda fija
+          adb shell pm disable-user --user 0 com.android.vending || true
+          echo "Instagram: $(adb shell dumpsys package com.instagram.android | grep -m1 versionName)"
+          adb shell pm list packages | grep -E "instagram|adbkeyboard"
+          adb exec-out screencap -p > listo.png
+
+      - name: Guardar el celular nuevo (seguro)
+        run: bash nube/copia.sh guardar
+
+      - name: Captura y log cifrados
+        if: always()
+        run: |
+          tar -czf diag.tgz $(ls *.png 2>/dev/null) emulador.log 2>/dev/null || true
+          [ -f diag.tgz ] && openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:EMU_CLAVE -in diag.tgz -out diag.tgz.enc || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diag-${{ github.run_id }}
+          path: diag.tgz.enc
+          retention-days: 7
+          if-no-files-found: ignore
