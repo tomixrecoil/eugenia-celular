@@ -70,7 +70,7 @@ jobs:
 
       - name: Android nuevo y limpio
         run: |
-          echo no | avdmanager create avd -n eugenia_cel -k "system-images;android-34;google_apis_playstore;x86_64" \
+          echo no | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd -n eugenia_cel -k "system-images;android-34;google_apis_playstore;x86_64" \
             -d pixel_6 -p /mnt/avd/eugenia_cel.avd --force
           C=/mnt/avd/eugenia_cel.avd/config.ini
           for kv in "hw.ramSize=4096" "disk.dataPartition.size=8G" "hw.keyboard=yes" "hw.gpu.enabled=yes" \
