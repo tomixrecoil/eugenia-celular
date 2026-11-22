@@ -1,0 +1,100 @@
+name: Sesión en vivo
+# 22/11: abre el celular de la nube con pantalla, visible desde el navegador (noVNC por un
+# túnel de Cloudflare). Sirve para que Tomix inicie sesión en las cuentas de Instagram o
+# apruebe una verificación: las contraseñas las escribe él, nunca un script.
+# El link (con su clave) va a R2 por la puerta (historias/codigo.json), no al registro
+# público. Termina cuando en esa misma clave aparece {"listo":1} o a los 60 minutos, y
+# guarda el celular con el guardado seguro.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: celular
+  cancel-in-progress: false
+
+jobs:
+  sesion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EMU_CLAVE: ${{ secrets.EMU_CLAVE }}
+      ADB_KEY: ${{ secrets.ADB_KEY }}
+      ADB_KEY_PUB: ${{ secrets.ADB_KEY_PUB }}
+      PUERTA_R2_URL: ${{ secrets.PUERTA_R2_URL }}
+      PUERTA_R2_KEY: ${{ secrets.PUERTA_R2_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Imagen de Android (cache)
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk/system-images/android-34/google_apis_playstore/x86_64
+            /usr/local/lib/android/sdk/emulator
+          key: android34-playstore-x86_64-v1
+
+      - name: Preparar la máquina
+        run: |
+          bash nube/preparar.sh
+          sudo apt-get -qq install -y xvfb x11vnc novnc websockify >/dev/null
+          curl -sL -o cf.deb https://github.com/cloudflare/cloudflared/releases/download/2024.12.2/cloudflared-linux-amd64.deb
+          sudo dpkg -i cf.deb >/dev/null && rm cf.deb
+
+      - name: Traer el celular
+        run: bash nube/copia.sh restaurar
+
+      - name: Prender con pantalla y abrir el acceso
+        run: |
+          Xvfb :1 -screen 0 1200x2560x24 >/dev/null 2>&1 &
+          sleep 2
+          export DISPLAY=:1
+          echo "DISPLAY=:1" >> "$GITHUB_ENV"
+          bash nube/prender.sh eugenia_cel ventana
+          P=$(openssl rand -hex 4)
+          echo "::add-mask::$P"
+          x11vnc -display :1 -passwd "$P" -forever -shared -rfbport 5900 -quiet >/dev/null 2>&1 &
+          websockify --web /usr/share/novnc 6080 localhost:5900 >/dev/null 2>&1 &
+          cloudflared tunnel --no-autoupdate --url http://localhost:6080 > cf.log 2>&1 &
+          for i in $(seq 1 60); do U=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' cf.log | head -1); [ -n "$U" ] && break; sleep 2; done
+          [ -n "$U" ] || { echo "no se abrió el túnel"; tail -20 cf.log; exit 1; }
+          echo "::add-mask::$U"
+          L="$U/vnc.html?autoconnect=1&resize=scale&password=$P"
+          printf '{"url":"%s","t":%s}' "$L" "$(date +%s)" > link.json
+          curl -sf -X PUT -H "x-clave: $PUERTA_R2_KEY" -H "user-agent: eugenia-celular/1.0" \
+            --data-binary @link.json "${PUERTA_R2_URL%/}/o/historias/codigo.json" && echo "link guardado en R2"
+          rm -f link.json
+
+      - name: Esperar a que Tomix termine (hasta 60 min)
+        run: |
+          for i in $(seq 1 120); do
+            r=$(curl -s -H "x-clave: $PUERTA_R2_KEY" -H "user-agent: eugenia-celular/1.0" "${PUERTA_R2_URL%/}/o/historias/codigo.json" || true)
+            echo "$r" | grep -q '"listo"' && { echo "listo"; break; }
+            sleep 30
+          done
+          adb exec-out screencap -p > final.png || true
+
+      - name: Guardar el celular (seguro)
+        run: bash nube/copia.sh guardar
+
+      - name: Borrar el link
+        if: always()
+        run: |
+          printf '{"cerrado":1}' | curl -s -X PUT -H "x-clave: $PUERTA_R2_KEY" -H "user-agent: eugenia-celular/1.0" \
+            --data-binary @- "${PUERTA_R2_URL%/}/o/historias/codigo.json" || true
+
+      - name: Captura y log cifrados
+        if: always()
+        run: |
+          tar -czf diag.tgz $(ls *.png 2>/dev/null) emulador.log 2>/dev/null || true
+          [ -f diag.tgz ] && openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:EMU_CLAVE -in diag.tgz -out diag.tgz.enc || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diag-${{ github.run_id }}
+          path: diag.tgz.enc
+          retention-days: 7
+          if-no-files-found: ignore
