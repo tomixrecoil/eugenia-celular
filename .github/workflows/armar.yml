@@ -87,8 +87,10 @@ jobs:
           bash nube/prender.sh eugenia_cel
           adb install-multiple -r ig/*.apk
           adb install -r apk/adbkeyboard.apk
-          adb shell ime enable com.android.adbkeyboard/.AdbIME
-          adb shell ime set com.android.adbkeyboard/.AdbIME
+          # Recién instalado tarda unos segundos en registrarse como teclado
+          for i in $(seq 1 20); do adb shell ime list -a -s | grep -q adbkeyboard && break; sleep 3; done
+          adb shell ime enable com.android.adbkeyboard/.AdbIME || true
+          adb shell ime set com.android.adbkeyboard/.AdbIME || true
           # Sin actualizaciones automáticas: la versión de Instagram queda fija
           adb shell pm disable-user --user 0 com.android.vending || true
           echo "Instagram: $(adb shell dumpsys package com.instagram.android | grep -m1 versionName)"
