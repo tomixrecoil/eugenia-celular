@@ -19,6 +19,10 @@ escribir_ini() {
 }
 
 restaurar() {
+  # 23/11: SIEMPRE la última copia guardada (origin/main), no la del commit con el que se
+  # lanzó la corrida: una corrida que esperó en cola arrancaba con una copia vieja, y
+  # volver a una copia vieja después de usar una más nueva es lo que bloqueó a hidroponía.
+  git fetch -q origin main && git show origin/main:copia_actual.txt > copia_actual.txt
   TAG=$(cat copia_actual.txt | tr -d '[:space:]')
   [ -n "$TAG" ] || { echo "no hay copia_actual.txt"; exit 1; }
   echo "copia: $TAG"
