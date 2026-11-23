@@ -46,10 +46,18 @@ def borrar(n, hhmm):
         foto(f"{n}_sin_perfil"); print("  no encontré la pestaña de perfil"); return False
     he.tocar(tab); time.sleep(4)
     ns = he.nodos()
-    av = he.buscar(r"story|historia", ns) or he.buscar(r"profile picture|foto del perfil", ns)
-    if not av:
+    # La foto del perfil, arriba a la izquierda (23/11: en hidroponía "story" agarraba la
+    # nota del perfil y abría el editor de notas).
+    cand = [x for x in ns if re.search(r"story|historia|profile picture|foto del perfil", x["desc"], re.I)
+            and not re.search(r"note|nota|thought", x["desc"] + x["text"], re.I)
+            and (x["b"][0] + x["b"][2]) // 2 < 450 and x["b"][1] < 1000]
+    if not cand:
         foto(f"{n}_sin_avatar"); print("  no encontré la foto del perfil"); return False
-    he.tocar(av); time.sleep(2.5)
+    he.tocar(cand[0]); time.sleep(2.5)
+    # Instagram abre en la primera historia NO vista, no en la más vieja: se retrocede
+    # tocando el borde izquierdo hasta la primera (en la primera, tocar ahí no hace nada).
+    for _ in range(len(antes) + 2):
+        he.adb("shell", "input", "tap", "60", "1300"); time.sleep(0.6)
     if not he.tocar_texto(r"^(More|Más|Menu|Menú|Opciones|Options)$", 6):
         foto(f"{n}_sin_mas"); print("  no encontré el botón Más en el visor"); return False
     time.sleep(1.5)
