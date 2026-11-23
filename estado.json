@@ -24,7 +24,9 @@
   "stk-hidro-836955": "2026-11-21T22:40:18+00:00",
   "stk-hidro-101462": "2026-11-21T22:40:18+00:00"
  },
- "fallas": {},
+ "fallas": {
+  "stk-terra-199045": 2
+ },
  "textos": {
   "bonsai": [
    "🎓 INFORMACION DEL CURSO",
@@ -50,7 +52,9 @@
    "💥 60% DE DESCUENTO | ENTRA YA",
    "60% OFF HOY | HAZ CLICK",
    "60% OFF HOY | ENTRA AHORA",
-   "🔥 60% OFF + BONOS | ENTRA YA"
+   "🔥 60% OFF + BONOS | ENTRA YA",
+   "🔗 60% DE DESCUENTO | EN",
+   "CURSO ONLINE 60% OFF | ENTRA 👉"
   ],
   "hidroponia": [
    "🔥 TOCA MAS INFORMACION",
@@ -101,6 +105,10 @@
   "herbologia": {
    "rid": "stk-herbo-472982",
    "t": "2026-11-22T19:01:24"
+  },
+  "terrarios": {
+   "rid": "stk-terra-199045",
+   "t": "2026-11-23T15:15:09"
   }
  }
 }
