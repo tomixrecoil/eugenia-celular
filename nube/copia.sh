@@ -75,11 +75,17 @@ guardar() {
   echo "$TAG" > copia_actual.txt
   git config user.name "eugenia-celular"; git config user.email "eugenia-celular@users.noreply.github.com"
   git add copia_actual.txt
-  for i in 1 2 3; do
-    git commit -q -m "copia del celular: $TAG" || true
-    git pull -q --rebase origin main && git push -q origin HEAD:main && break
+  # 23/11: con estado.json a medio escribir (corridas de historias), el pull --rebase
+  # fallaba en silencio y la copia nueva nunca quedaba en uso. --autostash lo resuelve,
+  # y se verifica en origin/main antes de dar la copia por buena.
+  git commit -q -m "copia del celular: $TAG" || true
+  for i in 1 2 3 4 5; do
+    git pull -q --rebase --autostash origin main && git push -q origin HEAD:main && break
     sleep 5
   done
+  git fetch -q origin main
+  [ "$(git show origin/main:copia_actual.txt | tr -d '[:space:]')" = "$TAG" ] || {
+    echo "NO pude dejar en uso la copia $TAG: no borro nada"; exit 1; }
   echo "copia nueva en uso: $TAG (antes: ${ANT:-ninguna})"
   # Se guardan la actual y la anterior; las más viejas se borran
   for t in $(gh release list -R "$R" --limit 100 --json tagName -q '.[].tagName' | grep '^cel-'); do
