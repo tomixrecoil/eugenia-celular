@@ -24,10 +24,11 @@
   "stk-hidro-836955": "2026-11-21T22:40:18+00:00",
   "stk-hidro-101462": "2026-11-21T22:40:18+00:00",
   "stk-bonsa-457734": "2026-11-23T15:46:30.012620+00:00",
-  "stk-herbo-472982": "2026-11-23T15:54:28.468448+00:00"
+  "stk-herbo-472982": "2026-11-23T15:54:28.468448+00:00",
+  "stk-terra-199045": "2026-11-23T16:29:13.304190+00:00"
  },
  "fallas": {
-  "stk-terra-199045": 3,
+  "stk-terra-199045": 4,
   "stk-hidro-940570": 4
  },
  "textos": {
@@ -59,7 +60,9 @@
    "🔗 60% DE DESCUENTO | EN",
    "CURSO ONLINE 60% OFF | ENTRA 👉",
    "🌐 60% OFF | TOCA AQUÍ",
-   "🎁 OFERTA EXCLUSIVA | ENTRA YA"
+   "🎁 OFERTA EXCLUSIVA | ENTRA YA",
+   "💥 60% OFF HOY | ENTRA YA",
+   "⏳ TOCA MAS INFORMACION"
   ],
   "hidroponia": [
    "🔥 CURSO 100% ONLINE | HAZ CLICK",
@@ -113,7 +116,7 @@
   },
   "terrarios": {
    "rid": "stk-terra-199045",
-   "t": "2026-11-23T15:23:54"
+   "t": "2026-11-23T16:21:54"
   }
  }
 }
