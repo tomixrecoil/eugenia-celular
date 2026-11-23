@@ -371,7 +371,9 @@ def publicar(nicho, archivo, texto="VER CURSO", sck="historia", cuenta="", y=0.0
     # no se revisaba. Ahora se abre el campo, se escribe, se lee lo que quedó y se reescribe
     # hasta 3 veces. Si no queda, NO se publica (mejor reintentar que salir con el link).
     def _norm(x):
-        return re.sub(r"\s+", " ", x or "").strip().upper()
+        # 23/11: uiautomator devuelve los emojis como entidades HTML (&#128279;)
+        import html
+        return re.sub(r"\s+", " ", html.unescape(x or "")).strip().upper()
     quedo = False
     for intento in range(3):
         campos = [n for n in nodos() if n["edit"]]
