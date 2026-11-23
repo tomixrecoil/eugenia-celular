@@ -16,6 +16,10 @@ on:
         type: choice
         options: ["", "todas", "sin-publicar"]
         default: ""
+      borrar:
+        description: "Borrar historias viejas: nicho@HH:MM (UTC), separadas por coma. Solo la más vieja de cada cuenta."
+        type: string
+        default: ""
 
 concurrency:
   group: celular
@@ -46,6 +50,7 @@ jobs:
         run: |
           python3 historias_nube.py --probar ${{ inputs.modo && format('--{0}', inputs.modo) || '' }} ${{ inputs.solo && format('--solo={0}', inputs.solo) || '' }} | tee probar.txt
           n=$(grep -oP 'pendientes: \K\d+' probar.txt || echo 0)
+          [ -n "${{ inputs.borrar }}" ] && n=1
           echo "n=$n" >> "$GITHUB_OUTPUT"
 
       - name: Imagen de Android (cache)
@@ -70,9 +75,14 @@ jobs:
           adb shell ime set com.android.adbkeyboard/.AdbIME || true
 
       - name: Historias
-        if: steps.pend.outputs.n != '0'
+        if: steps.pend.outputs.n != '0' && inputs.borrar == ''
         timeout-minutes: 30
         run: python3 historias_nube.py ${{ inputs.modo && format('--{0}', inputs.modo) || '' }} ${{ inputs.solo && format('--solo={0}', inputs.solo) || '' }}
+
+      - name: Borrar historias viejas
+        if: inputs.borrar != ''
+        timeout-minutes: 20
+        run: python3 borrar_historias.py "${{ inputs.borrar }}"
 
       - name: Guardar el celular (seguro)
         # Solo si subió alguna historia y el emulador sigue vivo (un disco de un emulador
