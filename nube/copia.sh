@@ -73,14 +73,12 @@ guardar() {
   done
   ANT=$(cat copia_actual.txt 2>/dev/null | tr -d '[:space:]' || true)
   echo "$TAG" > copia_actual.txt
-  git config user.name "eugenia-celular"; git config user.email "eugenia-celular@users.noreply.github.com"
-  git add copia_actual.txt
-  # 23/11: con estado.json a medio escribir (corridas de historias), el pull --rebase
-  # fallaba en silencio y la copia nueva nunca quedaba en uso. --autostash lo resuelve,
-  # y se verifica en origin/main antes de dar la copia por buena.
-  git commit -q -m "copia del celular: $TAG" || true
+  # 23/11: el puntero se cambia directo en GitHub (API), no con commit + pull --rebase: si
+  # otra corrida ya lo había cambiado, el rebase chocaba en copia_actual.txt y la copia nueva
+  # quedaba sin usar (y la próxima corrida volvía a una copia vieja).
   for i in 1 2 3 4 5; do
-    git pull -q --rebase --autostash origin main && git push -q origin HEAD:main && break
+    sha=$(gh api "repos/$R/contents/copia_actual.txt?ref=main" -q .sha)
+    gh api -X PUT "repos/$R/contents/copia_actual.txt" -f message="copia del celular: $TAG" -f content="$(echo "$TAG" | base64 -w0)" -f sha="$sha" -f branch=main >/dev/null && break
     sleep 5
   done
   git fetch -q origin main
