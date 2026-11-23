@@ -27,7 +27,8 @@
   "stk-terra-199045": "2026-11-23T17:42:11.352171+00:00",
   "stk-bonsa-457734": "2026-11-23T17:55:09.902678+00:00",
   "stk-hidro-940570": "2026-11-23T18:03:46.308733+00:00",
-  "stk-hidro-328992": "2026-11-23T21:26:28.054940+00:00"
+  "stk-hidro-328992": "2026-11-23T21:26:28.054940+00:00",
+  "stk-bonsa-782150": "2026-11-23T21:40:46.162004+00:00"
  },
  "fallas": {
   "stk-terra-199045": 6,
@@ -36,7 +37,6 @@
  },
  "textos": {
   "bonsai": [
-   "🎓 60% OFF | ENTRA AHORA",
    "🎓 60% DE DESCUENTO | ENTRA YA",
    "🎓 60% OFF | ENTRA YA",
    "🎓 60% DE DESCUENTO | ENTRA YA",
@@ -50,7 +50,8 @@
    "INFORMACION DEL CURSO",
    "OFERTA EXCLUSIVA | ENTRA YA",
    "🔥 60% OFF ESTA SEMANA | ENTRA",
-   "🔥 60% OFF + BONOS | ENTRA YA"
+   "🔥 60% OFF + BONOS | ENTRA YA",
+   "🔗 60% OFF HOY | HAZ CLICK"
   ],
   "terrarios": [
    "🔗 60% OFF ESTA SEMANA | ENTRA",
@@ -116,8 +117,8 @@
    "t": "2026-11-23T17:33:37"
   },
   "bonsai": {
-   "rid": "stk-bonsa-457734",
-   "t": "2026-11-23T17:45:47"
+   "rid": "stk-bonsa-782150",
+   "t": "2026-11-23T21:32:20"
   },
   "hidroponia": {
    "rid": "stk-hidro-328992",
