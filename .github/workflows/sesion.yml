@@ -18,7 +18,7 @@ concurrency:
 jobs:
   sesion:
     runs-on: ubuntu-latest
-    timeout-minutes: 100
+    timeout-minutes: 170
     env:
       GH_TOKEN: ${{ github.token }}
       EMU_CLAVE: ${{ secrets.EMU_CLAVE }}
@@ -68,9 +68,9 @@ jobs:
             --data-binary @link.json "${PUERTA_R2_URL%/}/o/historias/codigo.json" && echo "link guardado en R2"
           rm -f link.json
 
-      - name: Esperar a que Tomix termine (hasta 60 min)
+      - name: Esperar a que Tomix termine (hasta 120 min)
         run: |
-          for i in $(seq 1 120); do
+          for i in $(seq 1 240); do
             r=$(curl -s -H "x-clave: $PUERTA_R2_KEY" -H "user-agent: eugenia-celular/1.0" "${PUERTA_R2_URL%/}/o/historias/codigo.json" || true)
             echo "$r" | grep -q '"listo"' && { echo "listo"; break; }
             sleep 30
