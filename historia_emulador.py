@@ -485,6 +485,11 @@ def publicar(nicho, archivo, texto="VER CURSO", sck="historia", cuenta="", y=0.0
             adb("shell", "input", "swipe", str(x0), str(y0), str(x0), str(y0 + (meta - y0)), "1800")
             time.sleep(1.5)
             st = buscar(r"^Sticker\. ") or st
+    # 23/11: el pellizco o el arrastre a veces cuentan como toque y cambian el estilo
+    # (bonsái salió gris transparente): se vuelve a dejar en colores de Instagram al final.
+    if st and not estilo_color(st):
+        print("aviso: el sticker no quedó en colores de Instagram")
+    st = buscar(r"^Sticker\. ") or st
     if st:
         a_, b_, c_, d_ = st["b"]
         print(f"sticker: arriba en {(b_ - Y_VIDEO_PX) / 1920:.3f} del video, alto {d_ - b_}px, ancho {c_ - a_}px", flush=True)
