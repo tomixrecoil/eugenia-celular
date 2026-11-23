@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 ESTADO = ROOT / "estado.json"
 MAX_HORAS = 14
-Y_STICKER = 0.82          # 23/11 (Tomix: "el botón va siempre un poco por debajo de los subtítulos"): con 0.68 caía al 60% del video, ENCIMA de los subtítulos (medido en la historia de terrarios). 0.82 -> ~75%, debajo de los subtítulos y de la cinta (termina en 69%).
+Y_STICKER = 0.635         # 23/11 (Tomix: "justo abajo de los subtítulos, casi pegado pero sin estar pegado"): donde EMPIEZA el botón, fracción del alto del video. Nuestros subtítulos terminan ~0.62.
 CUENTAS = {               # nicho: (usuario de Instagram, página de Facebook)
     "hidroponia": ("ecosistema.hidroponico", "615394648318530"),
     "bonsai": ("bonsai.en.casa.desde.cero", "620810857774404"),

@@ -137,6 +137,53 @@ def _icono_color(st) -> bool:
     return rosas > 20 and naranjas > 10
 
 
+Y_VIDEO_PX = 130   # dónde arranca el video en la pantalla del editor de historias (1080x2400)
+
+
+def _pantalla_tactil():
+    """(/dev/input/eventN, max_x, max_y) de la pantalla táctil multitouch del emulador."""
+    out = adb("shell", "getevent", "-pl")
+    dev, mx, my = None, None, None
+    for bloque in out.split("add device")[1:]:
+        m = re.search(r"(/dev/input/event\d+)", bloque)
+        x = re.search(r"ABS_MT_POSITION_X.*?max (\d+)", bloque)
+        yy = re.search(r"ABS_MT_POSITION_Y.*?max (\d+)", bloque)
+        if m and x and yy:
+            return m.group(1), int(x.group(1)), int(yy.group(1))
+    raise RuntimeError("no encontré la pantalla táctil multitouch")
+
+
+def pellizcar(cx, cy, d0, d1, pasos=12):
+    """Pellizco con dos dedos (separando de d0 a d1 px) centrado en (cx, cy), con sendevent."""
+    dev, mx, my = _pantalla_tactil()
+    sx, sy = mx / 1080, my / 2400
+    ev = []
+    def e(t, c, v):
+        ev.append(f"sendevent {dev} {t} {c} {v}")
+    def dedos(d):
+        for slot, signo in ((0, -1), (1, 1)):
+            e(3, 47, slot)
+            e(3, 53, int((cx + signo * d / 2) * sx))
+            e(3, 54, int(cy * sy))
+        e(0, 0, 0)
+    e(3, 47, 0); e(3, 57, 701); e(3, 47, 1); e(3, 57, 702); e(1, 330, 1)
+    dedos(d0)
+    for i in range(1, pasos + 1):
+        dedos(d0 + (d1 - d0) * i / pasos)
+        ev.append("sleep 0.03")
+    e(3, 47, 0); e(3, 57, 4294967295); e(3, 47, 1); e(3, 57, 4294967295); e(1, 330, 0); e(0, 0, 0)
+    adb("shell", "; ".join(ev))
+
+
+def agrandar(st, factor=1.45):
+    """Agranda el sticker un `factor` con un pellizco sobre su centro."""
+    a_, b_, c_, d_ = st["b"]
+    ancho = c_ - a_
+    cx, cy = (a_ + c_) // 2, (b_ + d_) // 2
+    d0 = max(120, int(ancho * 0.5))
+    pellizcar(cx, cy, d0, int(d0 * factor))
+
+
 def estilo_color(st):
     """El sticker de enlace cambia de aspecto cada vez que se toca (4 estilos: azul,
     transparente, negro, y con la cadena en colores de Instagram). Tomix (18/11) quiere el de
@@ -415,20 +462,32 @@ def publicar(nicho, archivo, texto="VER CURSO", sck="historia", cuenta="", y=0.0
     if not estilo_color(st):
         print("aviso: no pude dejar el sticker en colores de Instagram; sale como está")
     st = buscar(r"^Sticker\. ") or st
-    if y:
-        # se arrastra manteniendo apretado; la historia ocupa el ancho entero (alto = ancho*16/9)
-        # el arrastre no es exacto: se mide dónde quedó y se corrige (hasta 4 veces)
-        meta = int(1080 * 16 / 9 * y)
-        for _ in range(4):
+    if st:
+        # 23/11 (Tomix: "más grande el botón"): pellizco con dos dedos para agrandarlo.
+        try:
+            agrandar(st)
+            time.sleep(1.5)
+            st = buscar(r"^Sticker\. ") or st
+        except Exception as e:  # noqa: BLE001
+            print("no pude agrandar el sticker:", str(e)[:120], flush=True)
+    if y and st:
+        # 23/11 (Tomix: "justo abajo de los subtítulos, casi pegado pero sin estar pegado"):
+        # `y` = dónde empieza el botón, como fracción del alto del VIDEO. En el editor de
+        # historias el video arranca en la pantalla en Y_VIDEO_PX y mide 1920 de alto
+        # (medido en las historias de terrarios del 23/11).
+        alto = st["b"][3] - st["b"][1]
+        meta = int(Y_VIDEO_PX + 1920 * y + alto / 2)
+        for _ in range(5):
             a_, b_, c_, d_ = st["b"]
             x0, y0 = (a_ + c_) // 2, (b_ + d_) // 2
-            if abs(y0 - meta) < 30:
+            if abs(y0 - meta) < 20:
                 break
             adb("shell", "input", "swipe", str(x0), str(y0), str(x0), str(y0 + (meta - y0)), "1800")
             time.sleep(1.5)
             st = buscar(r"^Sticker\. ") or st
     if st:
-        print(f"sticker en y={(st['b'][1] + st['b'][3]) // 2} (meta {int(1080 * 16 / 9 * y) if y else '-'})")
+        a_, b_, c_, d_ = st["b"]
+        print(f"sticker: arriba en {(b_ - Y_VIDEO_PX) / 1920:.3f} del video, alto {d_ - b_}px, ancho {c_ - a_}px", flush=True)
     # captura del editor antes de publicar, para revisar dónde quedó el botón
     with open(f"editor_{nicho}.png", "wb") as f:
         f.write(subprocess.run([ADB, "-s", "emulator-5554", "exec-out", "screencap", "-p"],
