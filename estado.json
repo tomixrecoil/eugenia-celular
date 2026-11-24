@@ -38,7 +38,9 @@
  "fallas": {
   "stk-terra-199045": 6,
   "stk-hidro-940570": 4,
-  "stk-herbo-472982": 1
+  "stk-herbo-472982": 1,
+  "stk-herbo-158357": 1,
+  "stk-hidro-703318": 1
  },
  "textos": {
   "bonsai": [
@@ -76,7 +78,6 @@
    "🎁 CURSO ONLINE 60% OFF | ENTRA"
   ],
   "hidroponia": [
-   "🔥 INFORMACION DEL CURSO",
    "60% OFF + BONOS | ENTRA YA",
    "OFERTA EXCLUSIVA | ENTRA YA",
    "CURSO 100% ONLINE | HAZ CLICK",
@@ -90,10 +91,10 @@
    "⏳ CURSO ONLINE 60% OFF | ENTRA",
    "⏳ 60% OFF ESTA SEMANA | ENTRA",
    "⏳ INFORMACION DEL CURSO",
-   "🔗 60% OFF + BONOS | ENTRA YA"
+   "🔗 60% OFF + BONOS | ENTRA YA",
+   "🌐 OBTEN TUS BONOS | HAZ CLICK"
   ],
   "herbologia": [
-   "TOCA MAS INFORMACION",
    "💥 60% OFF HOY | ENTRA YA",
    "⏳ 60% OFF HOY | HAZ CLICK",
    "🎓 OFERTA EXCLUSIVA | ENTRA YA",
@@ -107,15 +108,16 @@
    "🎓 60% OFF HOY | ENTRA YA",
    "🎓 60% DE DESCUENTO | ENTRA YA",
    "🎓 60% OFF HOY | HAZ CLICK",
-   "CURSO ONLINE 60% OFF | ENTRA 👉"
+   "CURSO ONLINE 60% OFF | ENTRA 👉",
+   "🎁 OFERTA EXCLUSIVA | ENTRA YA"
   ]
  },
  "pausadas": [],
  "pausa_hasta": {},
  "intentos": {
   "herbologia": {
-   "rid": "stk-herbo-614817",
-   "t": "2026-11-24T10:16:18"
+   "rid": "stk-herbo-158357",
+   "t": "2026-11-24T23:02:19"
   },
   "terrarios": {
    "rid": "stk-terra-998805",
@@ -126,8 +128,8 @@
    "t": "2026-11-24T21:32:40"
   },
   "hidroponia": {
-   "rid": "stk-hidro-672544",
-   "t": "2026-11-24T09:16:42"
+   "rid": "stk-hidro-703318",
+   "t": "2026-11-24T23:04:49"
   }
  }
 }
