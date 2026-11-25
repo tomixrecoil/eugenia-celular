@@ -321,6 +321,12 @@ def main():
                     log(f"Instagram pidió aprobar el ingreso en {n} y no se aprobó: 6 h en pausa")
             except Exception:  # noqa: BLE001
                 pass
+            # 25/11 (Tomix: a terrarios le saltaba "¿Fuiste tú?" cada 15 min): si no logra
+            # cambiar a la cuenta 3 veces, esa cuenta queda 6 h en pausa (le falta la sesión:
+            # se destraba con "Sesión en vivo").
+            if "no cambió de cuenta" in str(e) and fallas[rid] >= 3:
+                est.setdefault("pausa_hasta", {})[n] = (datetime.now(timezone.utc) + timedelta(hours=6)).isoformat()
+                log(f"no puede entrar a {CUENTAS[n][0]} ({fallas[rid]} intentos): 6 h en pausa")
             with open(ROOT / f"falla_{rid}.png", "wb") as f:
                 subprocess.run([he.ADB, "-s", "emulator-5554", "exec-out", "screencap", "-p"], stdout=f)
             he.adb("shell", "input", "keyevent", "4")
