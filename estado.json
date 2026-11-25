@@ -45,12 +45,12 @@
   "stk-herbo-158357": 7,
   "stk-hidro-703318": 2,
   "stk-herbo-846175": 28,
-  "stk-hidro-281632": 2
+  "stk-hidro-281632": 3,
+  "stk-bonsa-000518": 2,
+  "stk-herbo-588039": 2
  },
  "textos": {
   "bonsai": [
-   "60% DE DESCUENTO | ENTRA YA",
-   "🎓 60% OFF | TOCA AQUÍ",
    "60% OFF HOY | HAZ CLIC",
    "60% OFF HOY | ENTRA AHORA",
    "60% OFF HOY | TOCA AQUI",
@@ -63,7 +63,9 @@
    "🔗 60% OFF HOY | HAZ CLICK",
    "🎁 60% DE DESCUENTO | ENTRA YA",
    "🔥 CURSO 100% ONLINE | HAZ CLICK",
-   "💥 INFORMACION DEL CURSO"
+   "💥 INFORMACION DEL CURSO",
+   "🔥 OFERTA EXCLUSIVA | ENTRA YA",
+   "🔥 TOCA MAS INFORMACION"
   ],
   "terrarios": [
    "💥 60% DE DESCUENTO | ENTRA YA",
@@ -83,7 +85,6 @@
    "🔥 60% OFF + BONOS | ENTRA YA"
   ],
   "hidroponia": [
-   "60% OFF HOY | ENTRA AHORA",
    "60% OFF ESTA SEMANA | ENTRA",
    "TOCA MAS INFORMACION",
    "⏳ 60% OFF HOY | HAZ CLICK",
@@ -97,11 +98,10 @@
    "🌐 OBTEN TUS BONOS | HAZ CLICK",
    "🌐 TOCA MAS INFORMACION",
    "🌐 60% OFF | ENTRA AHORA",
-   "🌐 60% OFF HOY | ENTRA YA"
+   "🌐 60% OFF HOY | ENTRA YA",
+   "🌐 60% DE DESCUENTO | ENTRA YA"
   ],
   "herbologia": [
-   "⏳ 60% OFF + BONOS | ENTRA YA",
-   "⏳ CURSO ONLINE 60% OFF | ENTRA",
    "⏳ 60% OFF ESTA SEMANA | ENTRA",
    "⏳ INFORMACION DEL CURSO",
    "⏳ TOCA MAS INFORMACION",
@@ -114,27 +114,29 @@
    "⏳ TOCA MAS INFORMACION",
    "⏳ CURSO 100% ONLINE | HAZ CLICK",
    "⏳ OFERTA EXCLUSIVA | ENTRA YA",
-   "⏳ 60% OFF + BONOS | ENTRA YA"
+   "⏳ 60% OFF + BONOS | ENTRA YA",
+   "🔥 60% OFF HOY | HAZ CLICK",
+   "🔥 60% DE DESCUENTO | ENTRA YA"
   ]
  },
  "pausadas": [],
  "pausa_hasta": {},
  "intentos": {
   "herbologia": {
-   "rid": "stk-herbo-846175",
-   "t": "2026-11-25T20:02:49"
+   "rid": "stk-herbo-588039",
+   "t": "2026-11-25T21:53:23"
   },
   "terrarios": {
    "rid": "stk-terra-469125",
    "t": "2026-11-25T16:41:34"
   },
   "bonsai": {
-   "rid": "stk-bonsa-541089",
-   "t": "2026-11-25T16:32:34"
+   "rid": "stk-bonsa-000518",
+   "t": "2026-11-25T21:47:58"
   },
   "hidroponia": {
    "rid": "stk-hidro-281632",
-   "t": "2026-11-25T21:19:59"
+   "t": "2026-11-25T21:42:35"
   }
  }
 }
