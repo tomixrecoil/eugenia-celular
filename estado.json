@@ -43,7 +43,7 @@
   "stk-herbo-472982": 1,
   "stk-herbo-158357": 7,
   "stk-hidro-703318": 2,
-  "stk-herbo-846175": 8
+  "stk-herbo-846175": 10
  },
  "textos": {
   "bonsai": [
@@ -98,8 +98,6 @@
    "🌐 TOCA MAS INFORMACION"
   ],
   "herbologia": [
-   "🎁 OFERTA EXCLUSIVA | ENTRA YA",
-   "🎁 60% OFF ESTA SEMANA | ENTRA",
    "🎁 INFORMACION DEL CURSO",
    "🎁 CURSO 100% ONLINE | HAZ CLICK",
    "🎁 60% DE DESCUENTO | ENTRA YA",
@@ -112,7 +110,9 @@
    "⏳ CURSO 100% ONLINE | HAZ CLICK",
    "⏳ OFERTA EXCLUSIVA | ENTRA YA",
    "⏳ 60% OFF + BONOS | ENTRA YA",
-   "⏳ CURSO ONLINE 60% OFF | ENTRA"
+   "⏳ CURSO ONLINE 60% OFF | ENTRA",
+   "⏳ 60% OFF ESTA SEMANA | ENTRA",
+   "⏳ INFORMACION DEL CURSO"
   ]
  },
  "pausadas": [],
@@ -120,7 +120,7 @@
  "intentos": {
   "herbologia": {
    "rid": "stk-herbo-846175",
-   "t": "2026-11-25T17:33:15"
+   "t": "2026-11-25T17:48:31"
   },
   "terrarios": {
    "rid": "stk-terra-469125",
