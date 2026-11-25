@@ -44,7 +44,8 @@
   "stk-herbo-472982": 1,
   "stk-herbo-158357": 7,
   "stk-hidro-703318": 2,
-  "stk-herbo-846175": 28
+  "stk-herbo-846175": 28,
+  "stk-hidro-281632": 2
  },
  "textos": {
   "bonsai": [
@@ -82,8 +83,6 @@
    "🔥 60% OFF + BONOS | ENTRA YA"
   ],
   "hidroponia": [
-   "OFERTA EXCLUSIVA | ENTRA YA",
-   "CURSO 100% ONLINE | HAZ CLICK",
    "60% OFF HOY | ENTRA AHORA",
    "60% OFF ESTA SEMANA | ENTRA",
    "TOCA MAS INFORMACION",
@@ -96,7 +95,9 @@
    "⏳ INFORMACION DEL CURSO",
    "🔗 60% OFF + BONOS | ENTRA YA",
    "🌐 OBTEN TUS BONOS | HAZ CLICK",
-   "🌐 TOCA MAS INFORMACION"
+   "🌐 TOCA MAS INFORMACION",
+   "🌐 60% OFF | ENTRA AHORA",
+   "🌐 60% OFF HOY | ENTRA YA"
   ],
   "herbologia": [
    "⏳ 60% OFF + BONOS | ENTRA YA",
@@ -132,8 +133,8 @@
    "t": "2026-11-25T16:32:34"
   },
   "hidroponia": {
-   "rid": "stk-hidro-703318",
-   "t": "2026-11-25T07:34:22"
+   "rid": "stk-hidro-281632",
+   "t": "2026-11-25T21:19:59"
   }
  }
 }
