@@ -48,7 +48,7 @@
   "stk-herbo-158357": 7,
   "stk-hidro-703318": 2,
   "stk-herbo-846175": 28,
-  "stk-hidro-281632": 5,
+  "stk-hidro-281632": 7,
   "stk-bonsa-000518": 2,
   "stk-herbo-588039": 2
  },
@@ -88,8 +88,6 @@
    "💥 60% OFF HOY | ENTRA YA"
   ],
   "hidroponia": [
-   "⏳ 60% OFF HOY | HAZ CLICK",
-   "⏳ 60% DE DESCUENTO | ENTRA YA",
    "⏳ OFERTA EXCLUSIVA | ENTRA YA",
    "⏳ CURSO 100% ONLINE | HAZ CLICK",
    "⏳ CURSO ONLINE 60% OFF | ENTRA",
@@ -102,7 +100,9 @@
    "🌐 60% OFF HOY | ENTRA YA",
    "🌐 60% DE DESCUENTO | ENTRA YA",
    "🌐 60% OFF HOY | ENTRA YA",
-   "🌐 60% OFF HOY | ENTRA YA"
+   "🌐 60% OFF HOY | ENTRA YA",
+   "🌐 60% OFF HOY | ENTRA YA",
+   "🌐 60% OFF | ENTRA AHORA"
   ],
   "herbologia": [
    "⏳ INFORMACION DEL CURSO",
@@ -139,7 +139,7 @@
   },
   "hidroponia": {
    "rid": "stk-hidro-281632",
-   "t": "2026-11-25T22:36:17"
+   "t": "2026-11-25T22:48:40"
   }
  }
 }
