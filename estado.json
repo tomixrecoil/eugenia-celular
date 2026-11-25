@@ -35,7 +35,8 @@
   "stk-herbo-614817": "2026-11-24T10:26:02.686980+00:00",
   "stk-bonsa-779232": "2026-11-24T21:41:07.783925+00:00",
   "stk-bonsa-541089": "2026-11-25T16:40:45.293896+00:00",
-  "stk-terra-469125": "2026-11-25T16:50:43.306740+00:00"
+  "stk-terra-469125": "2026-11-25T16:50:43.306740+00:00",
+  "stk-herbo-846175": "2026-11-25T20:31:07.680451+00:00"
  },
  "fallas": {
   "stk-terra-199045": 6,
@@ -98,7 +99,6 @@
    "🌐 TOCA MAS INFORMACION"
   ],
   "herbologia": [
-   "⏳ 60% OFF + BONOS | ENTRA YA",
    "⏳ CURSO ONLINE 60% OFF | ENTRA",
    "⏳ 60% OFF ESTA SEMANA | ENTRA",
    "⏳ INFORMACION DEL CURSO",
@@ -112,7 +112,8 @@
    "⏳ TOCA MAS INFORMACION",
    "⏳ CURSO 100% ONLINE | HAZ CLICK",
    "⏳ OFERTA EXCLUSIVA | ENTRA YA",
-   "⏳ 60% OFF + BONOS | ENTRA YA"
+   "⏳ 60% OFF + BONOS | ENTRA YA",
+   "⏳ CURSO ONLINE 60% OFF | ENTRA"
   ]
  },
  "pausadas": [],
@@ -120,7 +121,7 @@
  "intentos": {
   "herbologia": {
    "rid": "stk-herbo-846175",
-   "t": "2026-11-25T20:02:49"
+   "t": "2026-11-25T20:23:09"
   },
   "terrarios": {
    "rid": "stk-terra-469125",
