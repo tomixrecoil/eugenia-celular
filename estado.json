@@ -39,7 +39,7 @@
   "stk-terra-199045": 6,
   "stk-hidro-940570": 4,
   "stk-herbo-472982": 1,
-  "stk-herbo-158357": 5,
+  "stk-herbo-158357": 6,
   "stk-hidro-703318": 2
  },
  "textos": {
@@ -95,7 +95,6 @@
    "🌐 TOCA MAS INFORMACION"
   ],
   "herbologia": [
-   "🎓 60% DE DESCUENTO | HAZ CLICK",
    "🎓 60% DESCUENTO | ENTRA YA",
    "🎓 60% OFF HOY | ENTRA AHORA",
    "🎓 60% OFF HOY | ENTRA AHORA",
@@ -109,7 +108,8 @@
    "🎁 60% OFF ESTA SEMANA | ENTRA",
    "🎁 INFORMACION DEL CURSO",
    "🎁 CURSO 100% ONLINE | HAZ CLICK",
-   "🎁 60% DE DESCUENTO | ENTRA YA"
+   "🎁 60% DE DESCUENTO | ENTRA YA",
+   "🎁 60% OFF HOY | HAZ CLICK"
   ]
  },
  "pausadas": [],
@@ -117,7 +117,7 @@
  "intentos": {
   "herbologia": {
    "rid": "stk-herbo-158357",
-   "t": "2026-11-25T07:32:14"
+   "t": "2026-11-25T09:16:16"
   },
   "terrarios": {
    "rid": "stk-terra-998805",
