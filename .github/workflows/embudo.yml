@@ -1,0 +1,54 @@
+name: Embudo MATERIALES
+# 25/11 (Tomix: "Sí, programala"): posts del embudo en hidroponía (IG + FB) a las 20:30 ART.
+# Lista: embudo.json. Lo hecho: estado_embudo.json (no se publica dos veces).
+# Segunda corrida 21:30 ART por si GitHub se saltea la primera (pasa con los cron).
+on:
+  schedule:
+    - cron: "30 23 * * *"
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: "Publicar esta fecha a mano (AAAA-MM-DD). Vacío = la de hoy."
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: embudo
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publicar
+        run: |
+          if [ -n "${{ inputs.fecha }}" ]; then python3 embudo.py --fecha "${{ inputs.fecha }}"; else python3 embudo.py; fi
+      - name: Guardar lo hecho
+        if: always()
+        run: |
+          [ -f estado_embudo.json ] || exit 0
+          git config user.name "eugenia-celular"
+          git config user.email "eugenia-celular@users.noreply.github.com"
+          cp estado_embudo.json /tmp/mio.json
+          for i in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python3 - <<'P'
+          import json, os
+          m = json.load(open("/tmp/mio.json", encoding="utf-8"))
+          r = json.load(open("estado_embudo.json", encoding="utf-8")) if os.path.exists("estado_embudo.json") else {}
+          for k, v in m.items():
+              r.setdefault(k, {}).update(v)
+          json.dump(r, open("estado_embudo.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          P
+            git add estado_embudo.json
+            git diff --cached --quiet && break
+            git commit -q -m "embudo $(date -u +%F' '%H:%M)" && git push -q && break
+            sleep 5
+          done
