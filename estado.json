@@ -55,7 +55,8 @@
   "stk-hidro-281632": 15,
   "stk-bonsa-000518": 2,
   "stk-herbo-588039": 2,
-  "stk-hidro-761541": 8
+  "stk-hidro-761541": 8,
+  "stk-hidro-853088": 2
  },
  "textos": {
   "bonsai": [
@@ -93,8 +94,6 @@
    "💥 60% OFF HOY | ENTRA YA"
   ],
   "hidroponia": [
-   "🌐 60% OFF | HAZ CLICK",
-   "🌐 60% OFF | ENTRA AHORA",
    "🌐 60% OFF HOY | ENTRA YA",
    "🌐 60% DE DESCUENTO | ENTRA YA",
    "🌐 60% OFF HOY | ENTRA YA",
@@ -107,7 +106,9 @@
    "💥 60% OFF HOY | ENTRA AHORA",
    "💥 60% OFF HOY | ENTRA AHORA",
    "💥 60% OFF HOY | ENTRA YA",
-   "💥 60% DE DESCUENTO | ENTRA YA"
+   "💥 60% DE DESCUENTO | ENTRA YA",
+   "💥 60% OFF HOY | ENTRA AHORA",
+   "💥 60% OFF HOY | ENTRA AHORA"
   ],
   "herbologia": [
    "⏳ CURSO 100% ONLINE | HAZ CLICK",
@@ -145,8 +146,8 @@
    "t": "2026-11-26T21:32:34"
   },
   "hidroponia": {
-   "rid": "stk-hidro-761541",
-   "t": "2026-11-26T18:49:19"
+   "rid": "stk-hidro-853088",
+   "t": "2026-11-26T22:39:07"
   }
  }
 }
